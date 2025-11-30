@@ -8,14 +8,14 @@ import {
   IonTitle,
   IonToolbar,
 } from '@ionic/react';
-import { Route } from 'react-router';
+import { Route } from 'react-router-dom';
 
 interface DynamicIonpageClassnamesProps {}
 
 const DynamicIonpageClassnames: React.FC<DynamicIonpageClassnamesProps> = () => {
   return (
     <IonRouterOutlet>
-      <Route path="/dynamic-ionpage-classnames" component={Page} />
+      <Route path="/dynamic-ionpage-classnames" element={<Page />} />
     </IonRouterOutlet>
   );
 };

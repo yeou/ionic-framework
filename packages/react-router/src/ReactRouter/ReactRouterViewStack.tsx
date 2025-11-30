@@ -53,32 +53,47 @@ export class ReactRouterViewStack extends ViewStacks {
       }
     });
 
+    const ViewLifeCycleManagerAny = ViewLifeCycleManager as any;
+
     const children = viewItems.map((viewItem) => {
       let clonedChild;
+      const props = {
+        computedMatch: viewItem.routeData.match,
+      };
+
       if (viewItem.ionRoute && !viewItem.disableIonPageManagement) {
         clonedChild = (
-          <ViewLifeCycleManager
+          <ViewLifeCycleManagerAny
             key={`view-${viewItem.id}`}
             mount={viewItem.mount}
             removeView={() => this.remove(viewItem)}
           >
-            {React.cloneElement(viewItem.reactElement, {
-              computedMatch: viewItem.routeData.match,
-            })}
-          </ViewLifeCycleManager>
+            {React.cloneElement(viewItem.reactElement, props)}
+          </ViewLifeCycleManagerAny>
         );
       } else {
         const match = matchComponent(viewItem.reactElement, routeInfo.pathname);
+        let content;
+        const { component, render, element } = viewItem.reactElement.props;
+
+        if (element) {
+          content = element;
+        } else if (component) {
+          content = React.createElement(component, props);
+        } else if (render) {
+          content = render(props);
+        } else {
+          content = React.cloneElement(viewItem.reactElement, props);
+        }
+
         clonedChild = (
-          <ViewLifeCycleManager
+          <ViewLifeCycleManagerAny
             key={`view-${viewItem.id}`}
             mount={viewItem.mount}
             removeView={() => this.remove(viewItem)}
           >
-            {React.cloneElement(viewItem.reactElement, {
-              computedMatch: viewItem.routeData.match,
-            })}
-          </ViewLifeCycleManager>
+            {content}
+          </ViewLifeCycleManagerAny>
         );
 
         if (!match && viewItem.routeData.match) {

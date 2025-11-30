@@ -8,7 +8,7 @@ import {
   IonButton,
   IonRouterOutlet,
 } from '@ionic/react';
-import { Route } from 'react-router';
+import { Route } from 'react-router-dom';
 
 interface PropsTestProps {}
 
@@ -21,7 +21,7 @@ const PropsTest: React.FC<PropsTestProps> = () => {
     <IonRouterOutlet>
       <Route
         path="/routing/propstest"
-        render={() => <InnerPropsTest count={count} setCount={setCount} />}
+        element={ <InnerPropsTest count={count} setCount={setCount} />}
       />
     </IonRouterOutlet>
   );

@@ -9,30 +9,28 @@ import {
   IonTitle,
   IonToolbar,
 } from '@ionic/react';
-import { RouteComponentProps } from 'react-router';
+import { useParams } from 'react-router-dom';
 
-interface PageProps
-extends RouteComponentProps<{
-  id: string;
-}> {}
+interface PageProps { }
 
 
-const Page: React.FC<PageProps> = ({ match }) => {
-  const parseID = parseInt(match.params.id);
+const Page: React.FC<PageProps> = () => {
+  const { id } = useParams<{ id: string }>();
+  const parseID = parseInt(id || '0');
   return (
-    <IonPage data-pageid={'params-' + match.params.id }>
+    <IonPage data-pageid={'params-' + id}>
       <IonHeader>
         <IonToolbar>
-          <IonTitle>Params { match.params.id }</IonTitle>
+          <IonTitle>Params {id}</IonTitle>
           <IonButtons slot="start">
             <IonBackButton />
           </IonButtons>
         </IonToolbar>
       </IonHeader>
       <IonContent>
-        <IonButton id="next-page" routerLink={'/params/' + (parseID + 1) } >Go to next param</IonButton>
+        <IonButton id="next-page" routerLink={'/params/' + (parseID + 1)} >Go to next param</IonButton>
         <br />
-        Page ID: { match.params.id }
+        Page ID: {id}
       </IonContent>
     </IonPage>
   );

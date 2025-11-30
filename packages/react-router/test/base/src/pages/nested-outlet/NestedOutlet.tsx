@@ -9,7 +9,7 @@ import {
 } from '@ionic/react';
 import { useEffect } from 'react';
 import React from 'react';
-import { Route, Redirect } from 'react-router';
+import { Route, Navigate } from 'react-router-dom';
 
 const Page: React.FC = () => {
   useEffect(() => {
@@ -48,10 +48,9 @@ const SecondPage: React.FC = () => {
     <IonRouterOutlet ionPage>
       <Route
         path="/nested-outlet/secondpage"
-        exact={true}
-        render={() => <Redirect to="/nested-outlet/secondpage/page" />}
-      />
-      <Route path="/nested-outlet/secondpage/page" component={Page} exact={true} />
+       
+        element={ <Navigate to="/nested-outlet/secondpage/page" />}       />
+      <Route path="/nested-outlet/secondpage/page" element={<Page />} />
     </IonRouterOutlet>
   );
 };
@@ -81,8 +80,8 @@ const FirstPage: React.FC = () => {
 
 const NestedOutlet: React.FC = () => (
   <IonRouterOutlet>
-    <Route path="/nested-outlet" component={FirstPage} exact={true} />
-    <Route path="/nested-outlet/secondpage" component={SecondPage} />
+    <Route path="/nested-outlet" element={<FirstPage />} />
+    <Route path="/nested-outlet/secondpage" element={<SecondPage />} />
   </IonRouterOutlet>
 );
 

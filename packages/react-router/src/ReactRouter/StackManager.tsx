@@ -9,10 +9,11 @@ import { matchPath } from './utils/matchPath';
 
 interface StackManagerProps {
   routeInfo: RouteInfo;
+  children?: React.ReactNode;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-interface StackManagerState {}
+interface StackManagerState { }
 
 const isViewVisible = (el: HTMLElement) =>
   !el.classList.contains('ion-page-invisible') && !el.classList.contains('ion-page-hidden');

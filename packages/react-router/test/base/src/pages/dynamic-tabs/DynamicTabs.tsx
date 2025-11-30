@@ -14,7 +14,7 @@ import {
   IonLabel,
   IonButton,
 } from '@ionic/react';
-import { Route, Redirect } from 'react-router';
+import { Route, Navigate } from 'react-router-dom';
 import { IonReactRouter } from '@ionic/react-router';
 import { triangle, square } from 'ionicons/icons';
 
@@ -27,11 +27,11 @@ const DynamicTabs: React.FC = () => {
 
   const render2ndTabRoute = useCallback(() => {
     if (display2ndTab) {
-      return <Route path="/dynamic-tabs/tab2" component={Tab2} />;
+      return <Route path="/dynamic-tabs/tab2" element={<Tab2 />} />;
     } else {
       // This is weird, if I return null or undefined then I get all sorts of errors, seemingly
       // because the router is mad about a child not being a route.
-      return <Route path="/dynamic-tabs/tab200" component={Tab1} />;
+      return <Route path="/dynamic-tabs/tab200" element={<Tab1 setDisplayThirdTab={() => setDisplayThirdTab(!display2ndTab)} />} />;
     }
   }, [display2ndTab]);
 
@@ -40,14 +40,13 @@ const DynamicTabs: React.FC = () => {
       <IonReactRouter>
         <IonTabs>
           <IonRouterOutlet>
-            <Route path="/dynamic-tabs/tab1" render={renderFirstTab} exact={true} />
+            <Route path="/dynamic-tabs/tab1" element={<Tab1 setDisplayThirdTab={() => setDisplayThirdTab(!display2ndTab)} />} />
             {render2ndTabRoute()}
             <Route
               path="/dynamic-tabs/"
-              render={() => <Redirect to="/dynamic-tabs/tab1" />}
-              exact={true}
+              element={<Navigate to="/dynamic-tabs/tab1" />}
             />
-            <Route render={() => <Redirect to="/dynamic-tabs/tab1" />} />
+            <Route element={<Navigate to="/dynamic-tabs/tab1" />} />
           </IonRouterOutlet>
           <IonTabBar slot="bottom">
             <IonTabButton tab="tab1" href="/dynamic-tabs/tab1">

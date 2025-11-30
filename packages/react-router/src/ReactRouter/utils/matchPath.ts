@@ -1,47 +1,49 @@
-import { matchPath as reactRouterMatchPath } from 'react-router';
+import { matchPath as reactRouterMatchPath } from 'react-router-dom';
 
 interface MatchPathOptions {
-  /**
-   * The pathname to match against.
-   */
   pathname: string;
-  /**
-   * The props to match against, they are identical to the matching props `Route` accepts.
-   */
   componentProps: {
     path?: string;
     from?: string;
-    component?: any;
     exact?: boolean;
+    strict?: boolean;
+    sensitive?: boolean;
   };
 }
 
-/**
- * @see https://v5.reactrouter.com/web/api/matchPath
- */
 export const matchPath = ({
   pathname,
   componentProps,
-}: MatchPathOptions): false | ReturnType<typeof reactRouterMatchPath> => {
-  const { exact, component } = componentProps;
-
+}: MatchPathOptions) => {
   const path = componentProps.path || componentProps.from;
-  /***
-   * The props to match against, they are identical
-   * to the matching props `Route` accepts. It could also be a string
-   * or an array of strings as shortcut for `{ path }`.
-   */
-  const matchProps = {
-    exact,
-    path,
-    component,
-  };
+  const { exact, sensitive } = componentProps;
 
-  const match = reactRouterMatchPath(pathname, matchProps);
-
-  if (!match) {
-    return false;
+  if (!path) {
+    return {
+      path: '/',
+      url: '/',
+      params: {},
+      isExact: pathname === '/',
+    };
   }
 
-  return match;
+  const match = reactRouterMatchPath(
+    {
+      path,
+      caseSensitive: sensitive,
+      end: exact,
+    },
+    pathname
+  );
+
+  if (!match) {
+    return null;
+  }
+
+  return {
+    path: match.pattern.path,
+    url: match.pathname,
+    isExact: match.pathname === pathname,
+    params: match.params,
+  };
 };

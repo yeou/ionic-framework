@@ -1,4 +1,11 @@
-import { Location as HistoryLocation } from 'history';
+// Simple location interface for tracking navigation history
+interface HistoryLocation {
+  pathname: string;
+  search?: string;
+  hash?: string;
+  state?: any;
+  key?: string;
+}
 
 const RESTRICT_SIZE = 25;
 

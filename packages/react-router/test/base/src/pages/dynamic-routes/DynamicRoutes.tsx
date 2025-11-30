@@ -7,32 +7,39 @@ import {
   IonToolbar,
   IonRouterOutlet,
 } from '@ionic/react';
-import { Route, Redirect } from 'react-router';
+import { Route, Navigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 
 const DynamicRoutes: React.FC = () => {
-  const [routes, setRoutes] = useState<ReactElement[]>([
-    <Route
-      key="sldjflsdj"
-      path="/dynamic-routes/home"
-      render={() => <Home update={addRoute} />}
-      exact={true}
-    />,
-  ]);
+  // Define addRoute before using it in the initial state
+  const [routes, setRoutes] = useState<ReactElement[]>([]);
 
   const addRoute = () => {
     const newRoute = (
-      <Route key="lsdjldj" path="/dynamic-routes/newRoute" component={NewRoute} exact={true} />
+      <Route key="lsdjldj" path="/dynamic-routes/newRoute" element={<NewRoute />} />
     );
     setRoutes([...routes, newRoute]);
   };
 
+  // Initialize routes after addRoute is defined
+  React.useEffect(() => {
+    if (routes.length === 0) {
+      setRoutes([
+        <Route
+          key="sldjflsdj"
+          path="/dynamic-routes/home"
+          element={<Home update={addRoute} />}
+        />,
+      ]);
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
   return (
     <IonRouterOutlet>
       {routes}
-      {/* <Route exact path="/home" render={() => <Home update={addRoute} />} /> */}
-      <Route exact path="/dynamic-routes" render={() => <Redirect to="/dynamic-routes/home" />} />
-      <Route render={() => <Failed />} />
+      {/* <Route path="/home" element={ <Home update={addRoute} />} /> */}
+      <Route path="/dynamic-routes" element={<Navigate to="/dynamic-routes/home" />} />
+      <Route element={<Failed />} />
     </IonRouterOutlet>
   );
 };
