@@ -1,6 +1,7 @@
 import type { RouteInfo, ViewItem } from '@ionic/react';
 import { IonRoute, ViewLifeCycleManager, ViewStacks, generateId } from '@ionic/react';
 import React from 'react';
+import { Route } from 'react-router-dom';
 
 import { matchPath } from './utils/matchPath';
 
@@ -83,7 +84,11 @@ export class ReactRouterViewStack extends ViewStacks {
         } else if (render) {
           content = render(props);
         } else {
-          content = React.cloneElement(viewItem.reactElement, props);
+          if (viewItem.reactElement.type === Route) {
+            content = null;
+          } else {
+            content = React.cloneElement(viewItem.reactElement, props);
+          }
         }
 
         clonedChild = (
