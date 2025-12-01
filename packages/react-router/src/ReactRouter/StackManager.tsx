@@ -356,6 +356,7 @@ export class StackManager extends React.PureComponent<StackManagerProps, StackMa
         progressAnimation,
         animationBuilder: routeInfo.routeAnimation,
       });
+      enteringEl.classList.remove('ion-page-invisible');
     };
 
     const routerOutlet = this.routerOutletElement!;
