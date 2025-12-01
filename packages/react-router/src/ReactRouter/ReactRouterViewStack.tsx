@@ -50,14 +50,6 @@ export class ReactRouterViewStack extends ViewStacks {
       routerChildren = (routerChildren as any).props.children;
     }
 
-    // Store all available route definitions (not just viewItems)
-    const allRouteDefinitions: React.ReactElement[] = [];
-    React.Children.forEach(routerChildren, (child: React.ReactElement) => {
-      if (React.isValidElement(child)) {
-        allRouteDefinitions.push(child);
-      }
-    });
-
     // Sync latest routes with viewItems
     React.Children.forEach(routerChildren, (child: React.ReactElement) => {
       const viewItem = viewItems.find((v) => {
@@ -70,8 +62,6 @@ export class ReactRouterViewStack extends ViewStacks {
 
     const ViewLifeCycleManagerAny = ViewLifeCycleManager as any;
 
-    // CRITICAL: Render ALL viewItems (visited routes), not just the current one
-    // This keeps previous pages in the DOM for animation transitions
     const children = viewItems.map((viewItem) => {
       let clonedChild;
       const props = {
@@ -129,13 +119,9 @@ export class ReactRouterViewStack extends ViewStacks {
           </ViewLifeCycleManagerAny>
         );
 
-        // Update mount status based on current match
-        // Keep mount=true for all viewItems to maintain them in DOM
-        // StackManager will handle visibility via CSS classes
         if (!match && viewItem.routeData.match) {
           viewItem.routeData.match = undefined;
-          // Don't set mount=false anymore - keep all visited routes mounted
-          // viewItem.mount = false;
+          viewItem.mount = false;
         }
       }
 
