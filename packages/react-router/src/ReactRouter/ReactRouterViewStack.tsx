@@ -84,8 +84,19 @@ export class ReactRouterViewStack extends ViewStacks {
         } else if (render) {
           content = render(props);
         } else {
+          // For Route components used directly (without Routes wrapper),
+          // we need to extract the element/component/render manually
           if (viewItem.reactElement.type === Route) {
-            content = null;
+            const { element: routeElement, component: routeComponent, render: routeRender } = viewItem.reactElement.props;
+            if (routeElement) {
+              content = routeElement;
+            } else if (routeComponent) {
+              content = React.createElement(routeComponent, props);
+            } else if (routeRender) {
+              content = routeRender(props);
+            } else {
+              content = null;
+            }
           } else {
             content = React.cloneElement(viewItem.reactElement, props);
           }
