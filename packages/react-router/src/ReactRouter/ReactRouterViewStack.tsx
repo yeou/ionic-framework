@@ -1,7 +1,7 @@
 import type { RouteInfo, ViewItem } from '@ionic/react';
 import { IonRoute, ViewLifeCycleManager, ViewStacks, generateId } from '@ionic/react';
 import React from 'react';
-import { Route } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 
 import { matchPath } from './utils/matchPath';
 
@@ -44,8 +44,14 @@ export class ReactRouterViewStack extends ViewStacks {
   getChildrenToRender(outletId: string, ionRouterOutlet: React.ReactElement, routeInfo: RouteInfo) {
     const viewItems = this.getViewItemsForOutlet(outletId);
 
+    // Unwrap Routes component to access individual Route children
+    let routerChildren = ionRouterOutlet.props.children;
+    if (React.isValidElement(routerChildren) && routerChildren.type === Routes) {
+      routerChildren = (routerChildren as any).props.children;
+    }
+
     // Sync latest routes with viewItems
-    React.Children.forEach(ionRouterOutlet.props.children, (child: React.ReactElement) => {
+    React.Children.forEach(routerChildren, (child: React.ReactElement) => {
       const viewItem = viewItems.find((v) => {
         return matchComponent(child, v.routeData.childProps.path || v.routeData.childProps.from);
       });

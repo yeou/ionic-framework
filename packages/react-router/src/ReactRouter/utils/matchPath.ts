@@ -38,14 +38,10 @@ export const matchPath = ({ pathname, componentProps }: MatchPathOptions): PathM
     // If pathname is empty or just "/", it should match the index route
     if (pathname === '' || pathname === '/') {
       return {
+        path: '',
+        url: pathname || '/',
         params: {},
-        pathname: pathname,
-        pathnameBase: pathname || '/',
-        pattern: {
-          path: '',
-          caseSensitive: false,
-          end: true,
-        },
+        isExact: true,
       };
     }
 
