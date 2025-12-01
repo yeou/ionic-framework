@@ -349,14 +349,17 @@ export class StackManager extends React.PureComponent<StackManagerProps, StackMa
         enteringEl.classList.add('ion-page-invisible');
       }
 
-      await routerOutlet.commit(enteringEl, leavingEl, {
-        duration: skipTransition || directionToUse === undefined ? 0 : undefined,
-        direction: directionToUse,
-        showGoBack: !!routeInfo.pushedByRoute,
-        progressAnimation,
-        animationBuilder: routeInfo.routeAnimation,
-      });
-      enteringEl.classList.remove('ion-page-invisible');
+      try {
+        await routerOutlet.commit(enteringEl, leavingEl, {
+          duration: skipTransition || directionToUse === undefined ? 0 : undefined,
+          direction: directionToUse,
+          showGoBack: !!routeInfo.pushedByRoute,
+          progressAnimation,
+          animationBuilder: routeInfo.routeAnimation,
+        });
+      } finally {
+        enteringEl.classList.remove('ion-page-invisible');
+      }
     };
 
     const routerOutlet = this.routerOutletElement!;
