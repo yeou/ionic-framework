@@ -26,6 +26,11 @@ interface MatchPathOptions {
  * @see https://reactrouter.com/v6/utils/match-path
  */
 export const matchPath = ({ pathname, componentProps }: MatchPathOptions): PathMatch<string> | null => {
+  // Early validation: pathname must be defined
+  if (!pathname && pathname !== '') {
+    return null;
+  }
+
   const { path: pathProp, from, index, caseSensitive, sensitive, end, exact, ...restProps } = componentProps;
   const path = pathProp || from;
 
