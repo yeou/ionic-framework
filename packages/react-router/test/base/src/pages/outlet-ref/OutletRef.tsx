@@ -7,9 +7,9 @@ import {
   IonTitle,
   IonContent,
 } from '@ionic/react';
-import { Route } from 'react-router';
+import { Route } from 'react-router-dom';
 
-interface OutletRefProps {}
+interface OutletRefProps { }
 
 export const OutletRef: React.FC<OutletRefProps> = () => {
   const ref = useRef<HTMLIonRouterOutletElement>(null);
@@ -22,9 +22,7 @@ export const OutletRef: React.FC<OutletRefProps> = () => {
     <IonRouterOutlet id="main-outlet" ref={ref}>
       <Route
         path="/outlet-ref"
-        render={() => {
-          return <Main outletId={ref.current?.id} />;
-        }}
+        element={<Main outletId={ref.current?.id} />}
       />
     </IonRouterOutlet>
   );

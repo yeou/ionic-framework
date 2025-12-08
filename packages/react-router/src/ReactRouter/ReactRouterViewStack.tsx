@@ -1,6 +1,7 @@
 import type { RouteInfo, ViewItem } from '@ionic/react';
 import { IonRoute, ViewLifeCycleManager, ViewStacks, generateId } from '@ionic/react';
 import React from 'react';
+import { Route, Routes } from 'react-router-dom';
 
 import { matchPath } from './utils/matchPath';
 
@@ -43,8 +44,14 @@ export class ReactRouterViewStack extends ViewStacks {
   getChildrenToRender(outletId: string, ionRouterOutlet: React.ReactElement, routeInfo: RouteInfo) {
     const viewItems = this.getViewItemsForOutlet(outletId);
 
+    // Unwrap Routes component to access individual Route children
+    let routerChildren = ionRouterOutlet.props.children;
+    if (React.isValidElement(routerChildren) && routerChildren.type === Routes) {
+      routerChildren = (routerChildren as any).props.children;
+    }
+
     // Sync latest routes with viewItems
-    React.Children.forEach(ionRouterOutlet.props.children, (child: React.ReactElement) => {
+    React.Children.forEach(routerChildren, (child: React.ReactElement) => {
       const viewItem = viewItems.find((v) => {
         return matchComponent(child, v.routeData.childProps.path || v.routeData.childProps.from);
       });
@@ -53,32 +60,63 @@ export class ReactRouterViewStack extends ViewStacks {
       }
     });
 
+    const ViewLifeCycleManagerAny = ViewLifeCycleManager as any;
+
     const children = viewItems.map((viewItem) => {
       let clonedChild;
+      const props = {
+        computedMatch: viewItem.routeData.match,
+      };
+
       if (viewItem.ionRoute && !viewItem.disableIonPageManagement) {
         clonedChild = (
-          <ViewLifeCycleManager
+          <ViewLifeCycleManagerAny
             key={`view-${viewItem.id}`}
             mount={viewItem.mount}
             removeView={() => this.remove(viewItem)}
           >
-            {React.cloneElement(viewItem.reactElement, {
-              computedMatch: viewItem.routeData.match,
-            })}
-          </ViewLifeCycleManager>
+            {React.cloneElement(viewItem.reactElement, props)}
+          </ViewLifeCycleManagerAny>
         );
       } else {
+        // Check if this route matches the current pathname
         const match = matchComponent(viewItem.reactElement, routeInfo.pathname);
+        let content;
+        const { component, render, element } = viewItem.reactElement.props;
+
+        if (element) {
+          content = element;
+        } else if (component) {
+          content = React.createElement(component, props);
+        } else if (render) {
+          content = render(props);
+        } else {
+          // For Route components used directly (without Routes wrapper),
+          // we need to extract the element/component/render manually
+          if (viewItem.reactElement.type === Route) {
+            const { element: routeElement, component: routeComponent, render: routeRender } = viewItem.reactElement.props;
+            if (routeElement) {
+              content = routeElement;
+            } else if (routeComponent) {
+              content = React.createElement(routeComponent, props);
+            } else if (routeRender) {
+              content = routeRender(props);
+            } else {
+              content = null;
+            }
+          } else {
+            content = React.cloneElement(viewItem.reactElement, props);
+          }
+        }
+
         clonedChild = (
-          <ViewLifeCycleManager
+          <ViewLifeCycleManagerAny
             key={`view-${viewItem.id}`}
             mount={viewItem.mount}
             removeView={() => this.remove(viewItem)}
           >
-            {React.cloneElement(viewItem.reactElement, {
-              computedMatch: viewItem.routeData.match,
-            })}
-          </ViewLifeCycleManager>
+            {content}
+          </ViewLifeCycleManagerAny>
         );
 
         if (!match && viewItem.routeData.match) {

@@ -16,18 +16,18 @@ import {
   IonTabsContext,
   IonButton,
 } from '@ionic/react';
-import { Route, Redirect } from 'react-router';
+import { Route, Navigate } from 'react-router-dom';
 import { triangle, square } from 'ionicons/icons';
 
-interface TabsContextProps {}
+interface TabsContextProps { }
 
 const TabsContext: React.FC<TabsContextProps> = () => {
   return (
     <IonTabs>
       <IonRouterOutlet id="tabs">
-        <Route path="/tab-context/tab1" component={Tab1} exact />
-        <Route path="/tab-context/tab2" component={Tab2} exact />
-        <Redirect from="/tab-context" to="/tab-context/tab1" exact />
+        <Route path="/tab-context/tab1" element={<Tab1 />} />
+        <Route path="/tab-context/tab2" element={<Tab2 />} />
+        <Route path="/tab-context" element={<Navigate to="/tab-context/tab1" replace />} />
       </IonRouterOutlet>
       <IonTabBar slot="bottom">
         <IonTabButton tab="tab1" href="/tab-context/tab1" routerOptions={{ unmount: true }}>

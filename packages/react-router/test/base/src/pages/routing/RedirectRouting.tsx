@@ -1,7 +1,7 @@
 import React, { useEffect, useContext } from 'react';
 import { IonRouterContext } from '@ionic/react';
 
-const RedirectRouting: React.FC = () => {
+const NavigateRouting: React.FC = () => {
   const ionRouterContext = useContext(IonRouterContext);
   useEffect(() => {
     ionRouterContext.push('/routing/tabs', 'none');
@@ -10,4 +10,4 @@ const RedirectRouting: React.FC = () => {
   return null;
 };
 
-export default RedirectRouting;
+export default NavigateRouting;

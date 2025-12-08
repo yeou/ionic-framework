@@ -9,10 +9,11 @@ import { matchPath } from './utils/matchPath';
 
 interface StackManagerProps {
   routeInfo: RouteInfo;
+  children?: React.ReactNode;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-interface StackManagerState {}
+interface StackManagerState { }
 
 const isViewVisible = (el: HTMLElement) =>
   !el.classList.contains('ion-page-invisible') && !el.classList.contains('ion-page-hidden');
@@ -348,13 +349,17 @@ export class StackManager extends React.PureComponent<StackManagerProps, StackMa
         enteringEl.classList.add('ion-page-invisible');
       }
 
-      await routerOutlet.commit(enteringEl, leavingEl, {
-        duration: skipTransition || directionToUse === undefined ? 0 : undefined,
-        direction: directionToUse,
-        showGoBack: !!routeInfo.pushedByRoute,
-        progressAnimation,
-        animationBuilder: routeInfo.routeAnimation,
-      });
+      try {
+        await routerOutlet.commit(enteringEl, leavingEl, {
+          duration: skipTransition || directionToUse === undefined ? 0 : undefined,
+          direction: directionToUse,
+          showGoBack: !!routeInfo.pushedByRoute,
+          progressAnimation,
+          animationBuilder: routeInfo.routeAnimation,
+        });
+      } finally {
+        enteringEl.classList.remove('ion-page-invisible');
+      }
     };
 
     const routerOutlet = this.routerOutletElement!;
